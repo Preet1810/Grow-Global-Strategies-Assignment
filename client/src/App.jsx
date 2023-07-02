@@ -1,8 +1,10 @@
 import React from 'react'
-
+import Auth from './components/Auth'
 const App=() => {
   return (
-    <div className='text-3xl font-bold underline'>App</div>
+    <div className=''>
+      <Auth />
+    </div>
   )
 }
 
