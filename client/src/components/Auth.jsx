@@ -1,6 +1,13 @@
 import React, { useState } from 'react'
+import config from "../config"
+import axios from 'axios'
+import { useDispatch } from "react-redux";
+import { setLogin } from "../state/index";
 
 const Auth=() => {
+    const dispatch=useDispatch();
+    // const navigate=useNavigate();
+
     const [isLogin, setIsLogin]=useState(true);
     const [objValue, setObjValue]=useState({})
 
@@ -14,14 +21,54 @@ const Auth=() => {
         setObjValue({ ...objValue, ...data })
     }
 
-    const handleLogin=(e) => {
+    const handleLogin=async (e) => {
         e.preventDefault()
-        console.log(objValue);
+        // setLoad(true)
+        try {
+            await axios.post(`${config.API_BASE_URL}/auth/login`, objValue)
+                .then((response) => {
+                    console.log(response);
+                    dispatch(
+                        setLogin({
+                            user: response.data.user,
+                            token: response.data.token
+                        })
+                    );
+                    setObjValue({})
+                    // setLoad(false)
+                })
+        } catch (err) {
+            setObjValue({})
+            // setLoad(false)
+            // setError(err.response.data.msg)
+            console.log(err)
+        }
     }
-    const handleCreateAcc=(e) => {
+    const handleCreateAcc=async (e) => {
         e.preventDefault()
-        console.log(objValue);
-    }
+        try {
+            await axios.post(`${config.API_BASE_URL}/auth/register`, objValue)
+                .then((response) => {
+                    console.log(response)
+                    dispatch(
+                        setLogin({
+                            user: response.data.savedUser,
+                            token: response.data.token
+                        })
+                    );
+                    setObjValue({})
+                    // navigate("/posts");
+                    // setLoad(false)
+                })
+
+        } catch (err) {
+            setObjValue({})
+            console.log(err)
+        }
+    };
+
+
+
     return (
         <div className="flex justify-center items-center h-screen">
             <div className="w-96 bg-white shadow-md rounded p-8">
